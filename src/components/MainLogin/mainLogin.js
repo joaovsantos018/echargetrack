@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Form from '../Form/form';
+import Form from '../FormLogin/form';
 
 export default function Main({ navigation }) {
     return (
