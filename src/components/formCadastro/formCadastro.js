@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
 export default function FormCadastro({navigation, errorMessage }) {
     const [email, setEmail] = useState('');
@@ -24,9 +24,9 @@ export default function FormCadastro({navigation, errorMessage }) {
     };
 
     return (
-        <View>
+        <View >
             <View>
-                <Text>Email</Text>
+                <Text >Email</Text>
                 <TextInput 
                     placeholder='echargetrack@gmail.com'
                     keyboardType='default'
@@ -59,3 +59,80 @@ export default function FormCadastro({navigation, errorMessage }) {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        borderRadius: 20,
+        flex: 1,
+        padding: 20,
+        marginTop: 250,
+        justifyContent: 'center',
+        alignItems: 'center', // Centraliza os itens horizontalmente
+        backgroundColor: '#b6ecb7',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5, // Para Android
+    },
+    label: {
+        color: 'black',
+        marginBottom: 5,
+        fontSize: 18,
+        textAlign: 'center', // Centraliza o texto
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        position: 'relative',
+        marginVertical: 10,
+        width: '100%', // Para garantir que o contêiner ocupe toda a largura
+        alignItems: 'center', // Centraliza os ícones e os campos
+    },
+    input: {
+        height: 50,
+        backgroundColor: '#FFF',
+        paddingLeft: 40,
+        borderRadius: 8,
+        fontSize: 18,
+        borderColor: '#E4E7EB',
+        borderWidth: 1,
+        flex: 1,
+    },
+    icon: {
+        position: 'absolute',
+        left: 10,
+        zIndex: 10,
+        color: 'black',
+    },
+    passwordIcon: {
+        position: 'absolute',
+        right: 10,
+        zIndex: 10,
+        bottom: -12,
+        color: 'black',
+    },
+    message: {
+        color: 'black',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    button: {
+        height: 40,
+        width: '80%', // Define a largura dos botões
+        borderWidth: 1,
+        borderColor: 'purple',
+        backgroundColor: 'white',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    buttonText: {
+        color: 'purple',
+        fontSize: 18,
+    },
+});

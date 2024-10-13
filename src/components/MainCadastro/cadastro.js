@@ -9,7 +9,6 @@ import FormCadastro from '../formCadastro/formCadastro';
 export default function Cadastro({ navigation }) {
     return (
         <View> 
-            <Title/>
             <FormCadastro navigation={navigation} />
         </View>
     );
