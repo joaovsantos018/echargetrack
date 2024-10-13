@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Main from './src/components/MainLogin/mainLogin';
-import Cadastro from './src/components/MainCadastro/cadastro'; // Importe sua tela de cadastro
+import Cadastro from './src/components/MainCadastro/cadastro';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,11 +17,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

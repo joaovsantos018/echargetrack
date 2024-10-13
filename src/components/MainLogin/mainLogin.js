@@ -15,9 +15,36 @@ export default function Main({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
         padding: 20,
+        justifyContent: 'center',
     },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        position: 'relative',
+        marginVertical: 10,
+    },
+    input: {
+        height: 50,
+        backgroundColor: '#FFF',
+        paddingLeft: 40, // Espaço para o ícone de e-mail
+        borderRadius: 8,
+        fontSize: 18,
+        borderColor: '#E4E7EB',
+        borderWidth: 1,
+        flex: 1,
+    },
+    icon: {
+        position: 'absolute',
+        left: 10,
+        zIndex: 10,
+        color: '#7B8794'
+    },
+    passwordIcon: {
+        position: 'absolute',
+        right: 10,
+        zIndex: 10,
+        color: '#7B8794'
+    }
 });
+

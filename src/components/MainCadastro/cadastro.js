@@ -8,7 +8,7 @@ import FormCadastro from '../formCadastro/formCadastro';
 
 export default function Cadastro({ navigation }) {
     return (
-        <View>
+        <View> 
             <Title/>
             <FormCadastro navigation={navigation} />
         </View>
