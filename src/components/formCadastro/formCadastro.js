@@ -1,60 +1,68 @@
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-export default function FormCadastro({navigation, errorMessage }) {
+export default function FormCadastro({ navigation, errorMessage }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [nome, setNome] = useState('');
     const [celular, setCelular] = useState('');
     const [textButton, setTextButton] = useState('Fazer Cadastro');
+    const [tipoUsuario, setTipoUsuario] = useState('Fornecedor');
 
-    const handleLogin = () => {
-        if (email === '' || password === '') {
-            setMessageResultLogin('Por favor, preencha todos os campos');
-            alert('Por favor, preencha todos os campos');
-        } else if (email === 'echargetrack@gmail.com' && password === 'senha123') {
-            setMessageResultLogin('Login bem-sucedido');
-            alert('Login bem-sucedido');
-        } else {
-            setMessageResultLogin('Falha ao realizar login');
-            alert('Falha ao realizar login');
-        }
+    const handleSubmit = () => {
+        Alert.alert(`Nome: ${nome}\nEmail: ${email}\nCelular: ${celular}\nTipo de Usuário: ${tipoUsuario}`)
     };
 
     return (
-        <View >
+        <View style={styles.container}>
             <View>
-                <Text >Email</Text>
-                <TextInput 
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                    style={styles.input}
                     placeholder='echargetrack@gmail.com'
                     keyboardType='default'
-                    onChangeText={setEmail} 
-                    value={email} 
+                    onChangeText={setEmail}
+                    value={email}
                 />
-                <Text>Senha</Text>
-                <TextInput 
+                <Text style={styles.label}>Senha</Text>
+                <TextInput
+                    style={styles.input}
                     placeholder='Digite sua senha'
                     secureTextEntry={true}
                     onChangeText={setPassword}
                     value={password}
                 />
-                <Text>Nome</Text>
-                <TextInput 
+                <Text style={styles.label}>Nome</Text>
+                <TextInput
+                    style={styles.input}
                     placeholder='Digite seu nome completo'
                     onChangeText={setNome}
                     value={nome}
                 />
-                <Text>Telefone/Celular</Text>
-                <TextInput 
+                <Text style={styles.label}>Telefone/Celular</Text>
+                <TextInput
+                    style={styles.input}
                     placeholder='(xx) xxxxx-xxxx'
                     onChangeText={setCelular}
                     value={celular}
                 />
-                <Button title={textButton} onPress={handleLogin} />
-                <Button title='Voltar para a página de login'
-                onPress={() => navigation.navigate('Login')} />
+                <Text style={styles.label}>Tipo de Usuário</Text>
+                <Picker
+                    selectedValue={tipoUsuario}
+                    onValueChange={(itemValue) => setTipoUsuario(itemValue)}
+                >
+                    <Picker.Item label="Fornecedor" value="Fornecedor" />
+                    <Picker.Item label="Instalador" value="Instalador" />
+                </Picker>
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>{textButton}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText}>Voltar para a página de login</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -65,74 +73,39 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         flex: 1,
         padding: 20,
-        marginTop: 250,
         justifyContent: 'center',
-        alignItems: 'center', // Centraliza os itens horizontalmente
+        alignItems: 'center',
         backgroundColor: '#b6ecb7',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5, // Para Android
     },
     label: {
-        color: 'black',
+        color: '#4B0082',
         marginBottom: 5,
         fontSize: 18,
-        textAlign: 'center', // Centraliza o texto
+        textAlign: 'center',
     },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        position: 'relative',
-        marginVertical: 10,
-        width: '100%', // Para garantir que o contêiner ocupe toda a largura
-        alignItems: 'center', // Centraliza os ícones e os campos
-    },
+
     input: {
-        height: 50,
+        height: 40,
+        width: 350,
         backgroundColor: '#FFF',
-        paddingLeft: 40,
+        paddingLeft: 10,
         borderRadius: 8,
         fontSize: 18,
-        borderColor: '#E4E7EB',
+        borderColor: '#4B0082',
         borderWidth: 1,
-        flex: 1,
-    },
-    icon: {
-        position: 'absolute',
-        left: 10,
-        zIndex: 10,
-        color: 'black',
-    },
-    passwordIcon: {
-        position: 'absolute',
-        right: 10,
-        zIndex: 10,
-        bottom: -12,
-        color: 'black',
-    },
-    message: {
-        color: 'black',
-        textAlign: 'center',
-        marginVertical: 10,
+        marginBottom: 10,
     },
     button: {
-        height: 40,
-        width: '80%', // Define a largura dos botões
-        borderWidth: 1,
-        borderColor: 'purple',
-        backgroundColor: 'white',
-        borderRadius: 8,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 10,
+        backgroundColor: '#4B0082',
+        borderRadius: 8,
+        marginVertical: 15, // Aumente a margem vertical
     },
+    
     buttonText: {
-        color: 'purple',
+        color: '#fff',
         fontSize: 18,
     },
 });
