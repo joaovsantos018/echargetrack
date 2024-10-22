@@ -10,10 +10,41 @@ export default function FormCadastro({ navigation, errorMessage }) {
     const [textButton, setTextButton] = useState('Fazer Cadastro');
     const [tipoUsuario, setTipoUsuario] = useState('Fornecedor');
 
-    const handleSubmit = () => {
-        Alert.alert(`Nome: ${nome}\nEmail: ${email}\nCelular: ${celular}\nTipo de Usuário: ${tipoUsuario}`)
-    };
+    const handleSubmit = async () => {
+        if (!email || !password || !nome || !celular) {
+            Alert.alert('Por favor, preencha todos os campos!');
+            return;
+        }
+        // Dados a serem enviados
+        const data = {
+            email,
+            password,
+            nome,
+            celular,
+            tipoUsuario,
+        };
 
+        try {
+            const response = await fetch('http://192.168.1.214:8080/api/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                navigation.navigate('Login');
+            } else {
+                Alert.alert('Erro no cadastro', result.message || 'Tente novamente mais tarde.');
+            }
+        } catch (error) {
+            console.error(error); // Para debug
+            Alert.alert('Erro de conexão', 'Não foi possível conectar ao servidor. ' + error.message);
+        }
+    };
     return (
         <View style={styles.container}>
             <View>
@@ -103,7 +134,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginVertical: 15, // Aumente a margem vertical
     },
-    
+
     buttonText: {
         color: '#fff',
         fontSize: 18,
