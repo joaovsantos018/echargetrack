@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { Alert, View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Form({ navigation }) {
@@ -8,17 +8,39 @@ export default function Form({ navigation }) {
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const [messageResultLogin, setMessageResultLogin] = useState('Preencha o Email e a senha');
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (email === '' || password === '') {
             setMessageResultLogin('Por favor, preencha todos os campos');
-        } else if (email === 'echargetrack@gmail.com' && password === 'senha123') {
-            setMessageResultLogin('Login bem-sucedido');
-            // navegação ou lógica após login bem-sucedido
         } else {
-            setMessageResultLogin('Falha ao realizar login');
+            try {
+                const response = await fetch('http://192.168.1.214:8080/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                    }),
+                });
+    
+                const data = await response.json();
+                
+                if (response.ok) {
+                    Alert.alert('parabéns');
+                    navigation.navigate('Home', { user: data.user });
+                    setMessageResultLogin(data.message);
+                } else {
+                    Alert.alert('Email ou senha incorretos!', data.message);
+                    setMessageResultLogin(data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao realizar login:', error);
+                setMessageResultLogin('Falha ao realizar login');
+            }
         }
     };
-
+    
     const togglePasswordVisibility = () => {
         setSecureTextEntry(!secureTextEntry);
     };
