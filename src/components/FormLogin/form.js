@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import Home from '../../componentsPosLogin/novoCarregamento/novaCarga';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Form({ navigation }) {
@@ -27,8 +28,8 @@ export default function Form({ navigation }) {
                 const data = await response.json();
                 
                 if (response.ok) {
-                    Alert.alert('parabéns');
-                    navigation.navigate('Home', { user: data.user });
+                    Alert.alert('parabéns, agora faz a home dev vagabundo');
+                    navigation.navigate('Home');
                     setMessageResultLogin(data.message);
                 } else {
                     Alert.alert('Email ou senha incorretos!', data.message);
