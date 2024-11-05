@@ -24,7 +24,7 @@ export default function NavBar({ navigation }) {
       navbar: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        padding: 10,
+        padding: 20,
         backgroundColor: '#f8f8f8',
         borderTopWidth: 1,
         borderTopColor: '#ccc',

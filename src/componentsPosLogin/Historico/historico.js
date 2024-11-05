@@ -7,7 +7,6 @@ export default function HistoryScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            {/* Botão para abrir o modal */}
             <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <Text style={{ color: 'white', fontSize: 20, marginBottom: 10 }}>Adicionar novo evento</Text>
             </TouchableOpacity>
