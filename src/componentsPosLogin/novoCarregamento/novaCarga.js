@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import NavBar from '../navBar/navbar';
 
@@ -7,27 +7,48 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modeloCarro, setModeloCarro] = useState('');
   const [dataCarga, setDataCarga] = useState('');
-  const [tipoCarga, setTipoCarga] = useState('');
+  const [nivelCarregador, setTipoCarga] = useState('');
   const [tempoCarga, setTempoCarga] = useState('');
-  const [precoKWh, setPrecoKWh] = useState('');
+  const [precoKWH, setPrecoKWh] = useState('');
 
   const pricePerKWh = {
-    'Nível 1': 0.50, 
-    'Nível 2': 1.00, 
-    'Nível 3': 2.80, 
-  };
-  
-  const handleTipoCargaChange = (tipo) => {
-    setTipoCarga(tipo);
-    if (tipo) {
-      setPrecoKWh(`R$ ${pricePerKWh[tipo].toFixed(2)}`);
-    } else {
-      setPrecoKWh('');
-    }
+    'Nível 1': 0.50,
+    'Nível 2': 1.00,
+    'Nível 3': 2.80,
   };
 
-  const requestSave = () => {
-    setModalVisible(false);
+  const handleTipoCargaChange = (tipo) => {
+    setTipoCarga(tipo);
+    setPrecoKWh(tipo ? pricePerKWh[tipo].toFixed(2) : '');
+  };
+
+  const requestSave = async () => {
+    const data = {
+      modeloCarro,
+      dataCarga,
+      nivelCarregador,
+      tempoCarga,
+      precoKWH: parseFloat(precoKWH), // Enviar como número
+    };
+    try {
+      const response = await fetch('http://192.168.1.112:8080/api/newCharge', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Carga salva com sucesso');
+        setModalVisible(false);
+      } else {
+        Alert.alert('Erro', 'Falha ao salvar carga');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar nova carga', error);
+      Alert.alert('Erro', 'Falha ao salvar carga');
+    }
   };
 
   return (
@@ -67,7 +88,7 @@ export default function Home({ navigation }) {
               <TextInput
                 style={styles.modalInput}
                 placeholder="120"
-                keyboardType="numeric"
+                keyboardType="default"
                 onChangeText={setTempoCarga}
                 value={tempoCarga}
               />
@@ -75,7 +96,7 @@ export default function Home({ navigation }) {
               <Text style={styles.modalLabel}>Nível do carregador</Text>
               <View style={styles.pickerContainer}>
                 <Picker
-                  selectedValue={tipoCarga}
+                  selectedValue={nivelCarregador}
                   onValueChange={handleTipoCargaChange}
                   style={styles.picker}
                 >
@@ -92,7 +113,7 @@ export default function Home({ navigation }) {
                 placeholder="Preço kWh"
                 keyboardType="numeric"
                 editable={false}
-                value={precoKWh}
+                value={`R$ ${precoKWH}`}
               />
             </View>
 
@@ -119,7 +140,6 @@ export default function Home({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
