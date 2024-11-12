@@ -14,11 +14,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Main} />
-        <Stack.Screen name="Cadastro" component={Cadastro} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Historico" component={HistoryScreen} />
-        <Stack.Screen name="Meu Perfil" component={ProfileScreen} />
+        <Stack.Screen name="Login" component={Main}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Cadastro" component={Cadastro}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={Home}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Historico" component={HistoryScreen}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Meu Perfil" component={ProfileScreen}  options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import NavBar from '../navBar/navbar';
 
@@ -76,12 +76,11 @@ export default function HistoryScreen({ navigation }) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(editCarga), // Envia os dados atualizados
+                body: JSON.stringify(editCarga), 
             });
 
             if (response.ok) {
                 const updatedCarga = await response.json();
-                // Atualize o estado para refletir as mudanças
                 setCargas((prevCargas) =>
                     prevCargas.map((carga) =>
                         carga.idCarga === updatedCarga.idCarga ? updatedCarga : carga
@@ -96,7 +95,6 @@ export default function HistoryScreen({ navigation }) {
             alert('Erro ao salvar a carga');
         }
     };
-
 
     return (
         <View style={styles.container}>
@@ -134,6 +132,7 @@ export default function HistoryScreen({ navigation }) {
                     )}
                 />
             )}
+
             {selectedCarga && (
                 <Modal
                     visible={modalVisible}
@@ -141,7 +140,10 @@ export default function HistoryScreen({ navigation }) {
                     onRequestClose={closeModal}
                     transparent={true}
                 >
-                    <View style={styles.modalContainer}>
+                    <KeyboardAvoidingView
+                        style={styles.modalContainer}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Ajusta o comportamento para iOS e Android
+                    >
                         <View style={styles.modalContent}>
                             <Text style={styles.modalTitle}>Detalhes da Carga</Text>
                             <Text style={styles.modalText}>Modelo do Carro: {selectedCarga.modeloCarro}</Text>
@@ -157,80 +159,73 @@ export default function HistoryScreen({ navigation }) {
                                 <Text style={styles.closeButtonText}>Fechar</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </KeyboardAvoidingView>
                 </Modal>
             )}
 
-{editCarga && (
-    <Modal
-        visible={editModalVisible}
-        animationType="slide"
-        onRequestClose={closeModal}
-        transparent={true}
-    >
-        <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Editar Carga</Text>
+            {editCarga && (
+                <Modal
+                    visible={editModalVisible}
+                    animationType="slide"
+                    onRequestClose={closeModal}
+                    transparent={true}
+                >
+                    <KeyboardAvoidingView
+                        style={styles.modalContainer}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Ajusta o comportamento para iOS e Android
+                    >
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Editar Carga</Text>
+                            <Text style={styles.textLabel}>Modelo do Carro</Text>
+                            <TextInput
+                                style={styles.modalTextInput}
+                                value={editCarga.modeloCarro}
+                                onChangeText={(text) => setEditCarga({ ...editCarga, modeloCarro: text })}
+                                placeholder="Modelo do Carro"
+                            />
 
-                {/* Modelo do Carro */}
-                <Text style={styles.textLabel}>Modelo do Carro</Text>
-                <TextInput
-                    style={styles.modalTextInput}
-                    value={editCarga.modeloCarro}
-                    onChangeText={(text) => setEditCarga({ ...editCarga, modeloCarro: text })}
-                    placeholder="Modelo do Carro"
-                />
+                            <Text style={styles.textLabel}>Tempo de Carga (minutos)</Text>
+                            <TextInput
+                                style={styles.modalTextInput}
+                                value={String(editCarga.tempoCarga)}
+                                onChangeText={(text) => setEditCarga({ ...editCarga, tempoCarga: text })}
+                                placeholder="Tempo de Carga (minutos)"
+                            />
 
-                {/* Tempo de Carga */}
-                <Text style={styles.textLabel}>Tempo de Carga (minutos)</Text>
-                <TextInput
-                    style={styles.modalTextInput}
-                    value={String(editCarga.tempoCarga)}
-                    onChangeText={(text) => setEditCarga({ ...editCarga, tempoCarga: text })}
-                    placeholder="Tempo de Carga (minutos)"
-                    keyboardType="numeric"
-                />
+                            <Text style={styles.textLabel}>Nível do Carregador</Text>
+                            <TextInput
+                                style={styles.modalTextInput}
+                                value={editCarga.nivelCarregador}
+                                onChangeText={(text) => setEditCarga({ ...editCarga, nivelCarregador: text })}
+                                placeholder="Nível do Carregador"
+                            />
 
-                {/* Nível do Carregador */}
-                <Text style={styles.textLabel}>Nível do Carregador</Text>
-                <TextInput
-                    style={styles.modalTextInput}
-                    value={editCarga.nivelCarregador}
-                    onChangeText={(text) => setEditCarga({ ...editCarga, nivelCarregador: text })}
-                    placeholder="Nível do Carregador"
-                />
+                            <Text style={styles.textLabel}>Data da Carga</Text>
+                            <TextInput
+                                style={styles.modalTextInput}
+                                value={editCarga.dataCarga}
+                                onChangeText={(text) => setEditCarga({ ...editCarga, dataCarga: text })}
+                                placeholder="Data da Carga"
+                            />
 
-                {/* Data da Carga */}
-                <Text style={styles.textLabel}>Data da Carga</Text>
-                <TextInput
-                    style={styles.modalTextInput}
-                    value={editCarga.dataCarga}
-                    onChangeText={(text) => setEditCarga({ ...editCarga, dataCarga: text })}
-                    placeholder="Data da Carga"
-                />
+                            <Text style={styles.textLabel}>Preço por KWh</Text>
+                            <TextInput
+                                style={styles.modalTextInput}
+                                value={String(editCarga.precoKWH)}
+                                onChangeText={(text) => setEditCarga({ ...editCarga, precoKWH: text })}
+                                placeholder="Preço por KWh"
+                            />
 
-                {/* Preço KWH */}
-                <Text style={styles.textLabel}>Preço por KWh</Text>
-                <TextInput
-                    style={styles.modalTextInput}
-                    value={String(editCarga.precoKWH)}
-                    onChangeText={(text) => setEditCarga({ ...editCarga, precoKWH: text })}
-                    placeholder="Preço por KWH"
-                    keyboardType="default"
-                />
-
-                {/* Botões de Salvar e Cancelar */}
-                <TouchableOpacity style={styles.saveButton} onPress={handleEditSave}>
-                    <Text style={styles.saveButtonText}>Salvar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                    <Text style={styles.closeButtonText}>Cancelar</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </Modal>
-)}
-
+                            <TouchableOpacity style={styles.saveButton} onPress={handleEditSave}>
+                                <Text style={styles.saveButtonText}>Salvar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                                <Text style={styles.closeButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                </Modal>
+            )}
 
             <View style={styles.navBarContainer}>
                 <NavBar navigation={navigation} />
@@ -240,6 +235,7 @@ export default function HistoryScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+   
     container: {
         flex: 1,
         backgroundColor: '#8A2BE2',
