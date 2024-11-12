@@ -17,8 +17,7 @@ export default function NavBar({ navigation }) {
         {
           text: "Sim",
           onPress: () => {
-            // Aqui você pode adicionar lógica de logout, caso necessário, como limpar o token de autenticação
-            navigation.navigate('Login'); // Navega para a página de login
+            navigation.navigate('Login');
           }
         }
       ]

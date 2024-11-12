@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, Alert } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import NavBar from '../navBar/navbar';
 
-
 export default function HistoryScreen({ navigation }) {
     const [cargas, setCargas] = useState([]);
-    const [loading, setLoading] = useState(true); 
-    const [modalVisible, setModalVisible] = useState(false); 
-    const [selectedCarga, setSelectedCarga] = useState(null); 
+    const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedCarga, setSelectedCarga] = useState(null);
+    const [editCarga, setEditCarga] = useState(null);
 
     useEffect(() => {
         const fetchCargas = async () => {
@@ -26,16 +27,12 @@ export default function HistoryScreen({ navigation }) {
         fetchCargas();
     }, []);
 
-   
     const deleteCarga = async (idCarga) => {
         Alert.alert(
             "Confirmar exclusão",
             "Tem certeza que deseja excluir a carga do histórico?",
             [
-                {
-                    text: "Cancelar",
-                    style: "cancel"
-                },
+                { text: "Cancelar", style: "cancel" },
                 {
                     text: "Deletar",
                     onPress: async () => {
@@ -54,17 +51,52 @@ export default function HistoryScreen({ navigation }) {
         );
     };
 
-   
     const openModal = (carga) => {
         setSelectedCarga(carga);
         setModalVisible(true);
     };
 
-   
     const closeModal = () => {
         setModalVisible(false);
+        setEditModalVisible(false);
         setSelectedCarga(null);
+        setEditCarga(null);
     };
+
+    const openEditModal = (carga) => {
+        setSelectedCarga(carga);
+        setEditCarga(carga);
+        setEditModalVisible(true);
+    };
+
+    const handleEditSave = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.112:8080/api/updateCharge/id=${editCarga.idCarga}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editCarga), // Envia os dados atualizados
+            });
+
+            if (response.ok) {
+                const updatedCarga = await response.json();
+                // Atualize o estado para refletir as mudanças
+                setCargas((prevCargas) =>
+                    prevCargas.map((carga) =>
+                        carga.idCarga === updatedCarga.idCarga ? updatedCarga : carga
+                    )
+                );
+                closeModal();
+            } else {
+                alert('Erro ao editar carga');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar a carga:', error);
+            alert('Erro ao salvar a carga');
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -87,16 +119,21 @@ export default function HistoryScreen({ navigation }) {
                                 </Text>
                                 <TouchableOpacity
                                     style={styles.deleteButton}
-                                    onPress={() => deleteCarga(item.idCarga)} // Passando o idCarga para a função
+                                    onPress={() => deleteCarga(item.idCarga)}
                                 >
                                     <Ionicons name="trash" style={styles.icon} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.updateIcon}
+                                    onPress={() => openEditModal(item)}
+                                >
+                                    <Ionicons name="pencil" style={styles.icon} />
                                 </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
                     )}
                 />
             )}
-
             {selectedCarga && (
                 <Modal
                     visible={modalVisible}
@@ -123,6 +160,78 @@ export default function HistoryScreen({ navigation }) {
                     </View>
                 </Modal>
             )}
+
+{editCarga && (
+    <Modal
+        visible={editModalVisible}
+        animationType="slide"
+        onRequestClose={closeModal}
+        transparent={true}
+    >
+        <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Editar Carga</Text>
+
+                {/* Modelo do Carro */}
+                <Text style={styles.textLabel}>Modelo do Carro</Text>
+                <TextInput
+                    style={styles.modalTextInput}
+                    value={editCarga.modeloCarro}
+                    onChangeText={(text) => setEditCarga({ ...editCarga, modeloCarro: text })}
+                    placeholder="Modelo do Carro"
+                />
+
+                {/* Tempo de Carga */}
+                <Text style={styles.textLabel}>Tempo de Carga (minutos)</Text>
+                <TextInput
+                    style={styles.modalTextInput}
+                    value={String(editCarga.tempoCarga)}
+                    onChangeText={(text) => setEditCarga({ ...editCarga, tempoCarga: text })}
+                    placeholder="Tempo de Carga (minutos)"
+                    keyboardType="numeric"
+                />
+
+                {/* Nível do Carregador */}
+                <Text style={styles.textLabel}>Nível do Carregador</Text>
+                <TextInput
+                    style={styles.modalTextInput}
+                    value={editCarga.nivelCarregador}
+                    onChangeText={(text) => setEditCarga({ ...editCarga, nivelCarregador: text })}
+                    placeholder="Nível do Carregador"
+                />
+
+                {/* Data da Carga */}
+                <Text style={styles.textLabel}>Data da Carga</Text>
+                <TextInput
+                    style={styles.modalTextInput}
+                    value={editCarga.dataCarga}
+                    onChangeText={(text) => setEditCarga({ ...editCarga, dataCarga: text })}
+                    placeholder="Data da Carga"
+                />
+
+                {/* Preço KWH */}
+                <Text style={styles.textLabel}>Preço por KWh</Text>
+                <TextInput
+                    style={styles.modalTextInput}
+                    value={String(editCarga.precoKWH)}
+                    onChangeText={(text) => setEditCarga({ ...editCarga, precoKWH: text })}
+                    placeholder="Preço por KWH"
+                    keyboardType="default"
+                />
+
+                {/* Botões de Salvar e Cancelar */}
+                <TouchableOpacity style={styles.saveButton} onPress={handleEditSave}>
+                    <Text style={styles.saveButtonText}>Salvar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                    <Text style={styles.closeButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    </Modal>
+)}
+
+
             <View style={styles.navBarContainer}>
                 <NavBar navigation={navigation} />
             </View>
@@ -136,7 +245,31 @@ const styles = StyleSheet.create({
         backgroundColor: '#8A2BE2',
         justifyContent: 'center',
         alignItems: 'center',
-      },
+    },
+    modalTextInput: {
+        width: '100%',
+        height: 40,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 15,
+        paddingHorizontal: 10,
+        fontSize: 16,
+        color: '#333',
+    },
+    saveButton: {
+        marginTop: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#32CD32',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    saveButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
     title: {
         fontSize: 24,
         color: 'white',
@@ -151,8 +284,6 @@ const styles = StyleSheet.create({
     },
     navBarContainer: {
         width: '100%',
-        top:10,
-    
     },
     itemContainer: {
         backgroundColor: '#FFFFFF',
@@ -164,17 +295,15 @@ const styles = StyleSheet.create({
     itemButton: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent:'space-between',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        width:'100%',
+        width: '100%',
         padding: 10,
         backgroundColor: '#A6E856',
         borderRadius: 5,
-        alignItems: 'center',
     },
     icon: {
         fontSize: 15,
-        
     },
     itemText: {
         fontSize: 16,
@@ -197,11 +326,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 15,
-    },
-    modalText: {
-        fontSize: 16,
-        color: '#333333',
-        marginBottom: 10,
+        color: '#333',
     },
     closeButton: {
         marginTop: 20,
@@ -210,7 +335,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF6347',
         borderRadius: 5,
         alignItems: 'center',
-        justifyContent: 'center',
     },
     deleteButton: {
         paddingVertical: 10,
@@ -218,11 +342,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#FF6347',
         borderRadius: 5,
         alignItems: 'center',
-        justifyContent: 'center',
+    },
+    updateIcon: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#75B1F0',
+        borderRadius: 5,
+        alignItems: 'center',
     },
     closeButtonText: {
-        fontSize: 18,
         color: 'white',
         fontWeight: 'bold',
+        fontSize: 16,
+    },
+    textLabel: {
+        fontSize: 15,
+        color: '#555',
+        marginBottom: 5,
     },
 });
+
